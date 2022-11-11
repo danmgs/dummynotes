@@ -1,0 +1,81 @@
+In the context of networking, the term “load balancing” refers to the process of distributing incoming network traffic across multiple backend resources. Such backend resources are typically virtual machines that are deployed in a “backend pool” but can also be instances in a virtual machine scale set.
+
+So, why would you ever use a load balancer? Well, there are many use cases for load balancers, both public and internal. 
+The most common use case for a load balancer is when you wish to increase availability of your application by distributing it across multiple VMs and across multiple zones. You might also want to deploy a load balancer if you wish to provide outbound connectivity for your VMs without assigning them their own public IP addresses.
+
+While the standard load balancer supports zone-redundant and zonal frontends for inbound and outbound traffic, basic load balancers do not offer any support at all for availability zones.
+
+What is a difference between Azure load balancer and Azure Application Gateway?
+Résultat de recherche d'images pour "application gateway or azure load balancer cost comparison"
+Traditional load balancers operate at the transport layer (OSI layer 4 - TCP and UDP) and route traffic based on source IP address and port, to a destination IP address and port. 
+Application Gateway can make routing decisions based on additional attributes of an HTTP request, for example URI path or host headers.
+
+
+
+
+
+*** *** *** *** *** *** *** 
+*** Azure Load Balancer *** 
+*** *** *** *** *** *** *** 
+
+Caractéristique
+Even traffic distribution
+External and internal traffic
+Supports both inbound and outbound scenarios
+HA and scalability scenariosBoth TCP abd UDP applications
+
+*** *** *** *** *** *** *** 
+*** Application Gateway *** 
+*** *** *** *** *** *** *** 
+
+
+Web traffic load balancer
+Web application firewall
+Redirection   
+Session affinity
+URL Routing   https://learn.microsoft.com/en-us/azure/application-gateway/overview
+SSL Termination  ("SSL offload"), déchargement ssl
+
+
+
+Azure LB
+Plusieurs backend pools mais on en a définit 1
+
+
+Dans l'ordre:
+Create a Load Balancer
+Configuring backend pools
+Adding health Probes
+Adding Load balancing rule
+
+
+backend pool: ensemble de VM
+On peut en créer plusieurs (intéressant dans le cas d'une application Gateway)
+
+
+frontend private ips: dynamic ou static dans le meme vnet/subnet que les machines.
+Comment on attaque le LB
+
+
+Health Probes: est ce que le service sur la VM est healthy ?
+Health probes are used to check the status of a backend pool instance. If the health probe fails to get a response from a backend instance then no new connections will be sent to that backend instance until the health probe succeeds again.
+urlpath de check du service (renvoie un timestamp , un guid.. une réponse 200!)
+
+Interval de check ("Interval" en second) et combien de fois ("Unhealthy threshold"-> deprecated) le check est en échec pour déclarer le service KO. 
+
+
+
+
+
+LBRule: 
+C'est la dernière chose à créer : combinaison de FIP, HP, et BACKEND POOL !
+règle de routage de traffic: combinaison unique de "fip + port" vers quel backend port de vm qui est dans backendpool
+notion de session persistent (combinaison de "client ip + port"   ou "client ip" qui fait que le LB redirige les requetes successives d'un meme client vers la meme VM, le temps d'une session)
+
+
+
+https://azure.microsoft.com/en-us/pricing/details/load-balancer/
+
+
+
+
